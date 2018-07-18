@@ -1,0 +1,24 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FCS Validator</title>
+  <meta name="description" content="Utility for vaildating FCS file specification compliance">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <script src="main.js"></script>
+  <label for="file-select">Select a file to validate</label>
+  <input type="file" id="file-select" onchange="validate(this.files[0])">
+  <div id="errors"></div>
+  <table id="report">
+    <thead>
+      <th></th><th>Check</th><th>Notes</th>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</body>
+</html>

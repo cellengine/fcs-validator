@@ -1,0 +1,10 @@
+{
+  "name": "fcs-validator",
+  "version": "1.0.0",
+  "description": "Fast utility for validating FCS file specification compliance",
+  "main": "index.js",
+  "repository": "git@github.com:primitybio/fcs-validator.git",
+  "author": "Zach Bjornson <zbbjornson@gmail.com>",
+  "license": "AGPLv3",
+  "private": false
+}
