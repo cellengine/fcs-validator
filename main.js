@@ -680,7 +680,7 @@ function checkPnD(keyvals) {
 			}
 			f1 = Number.parseFloat(f1);
 			f2 = Number.parseFloat(f2);
-			if (f2 < f1) {
+			if (type === "Linear" && f2 < f1) {
 				ok = false;
 				logInfo({
 					name: "§3.2.20 Keyword Specifications",
