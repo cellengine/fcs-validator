@@ -595,41 +595,44 @@ function checkIntegers(version, keyvals) {
 }
 
 function checkFloats(version, keyvals) {
-	let ok = true;
+	let global$PnEok = true;
+	let global$PnBok = true;
 	const $PAR = Number.parseInt(keyvals.get("$PAR"), 10);
 	const ok$PnE = "0,0";
 	const $DATATYPE = keyvals.get("$DATATYPE");
-	const ok$PnB = $DATATYPE === "F" ? "32" : "64";
+	const allowed$PnB = $DATATYPE === "F" ? "32" : "64";
 	for (let n = 1; n <= $PAR; n++) {
 		const $PnEok = version !== "3.1" || keyvals.get(`$P${n}E`) === ok$PnE;
 		if (!$PnEok) {
-			ok = false;
+			global$PnEok = false;
 			logInfo({
 				name: "§3.2.20 Keyword Specifications",
-				notes: `$PnE must be "0,0" for $DATATYPE ${$DATATYPE}.`,
+				notes: `$PnE must be "0,0" for $DATATYPE ${$DATATYPE} (channel ${n}).`,
 				level: $PnEok ? "ok" : "error"
 			});
 		}
 
-		const $PnBok = keyvals.get(`$P${n}B`) === ok$PnB;
+		const $PnBok = keyvals.get(`$P${n}B`) === allowed$PnB;
 		if (!$PnBok) {
-			ok = false;
+			global$PnBok = false;
 			logInfo({
 				name: "§3.2.20 Keyword Specifications",
-				notes: `$PnB must be ${ok$PnB} for $DATATYPE ${$DATATYPE}.`,
+				notes: `$PnB must be ${allowed$PnB} for $DATATYPE ${$DATATYPE} (channel ${n}).`,
 				level: $PnEok ? "ok" : "error"
 			});
 		}
 	}
-	if (ok) {
+	if (global$PnEok) {
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
 			notes: `$PnE values for $DATATYPE ${$DATATYPE} are all "0,0".`,
 			level: "ok"
 		});
+	}
+	if (global$PnBok) {
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
-			notes: `$PnB values for $DATATYPE ${$DATATYPE} are all ${ok$PnB}.`,
+			notes: `$PnB values for $DATATYPE ${$DATATYPE} are all ${allowed$PnB}.`,
 			level: "ok"
 		});
 	}
