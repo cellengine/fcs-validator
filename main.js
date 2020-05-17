@@ -445,7 +445,7 @@ function checkDuplicateKeywords(keyvals, text) {
 function checkInteger(keyword, keyvals) {
 	const value = keyvals.get(keyword);
 	if (value) {
-		const ok = /[0-9]+/.test(value);
+		const ok = /^[0-9]+$/.test(value);
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
 			notes: `${keyword} must be an integer.`,
@@ -457,10 +457,10 @@ function checkInteger(keyword, keyvals) {
 function checkFloat(keyword, keyvals) {
 	const value = keyvals.get(keyword);
 	if (value) {
-		const ok = /[\.0-9]+/.test(value);
+		const ok = /^[\.0-9]+$/.test(value);
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
-			notes: `${keyword} must be an number.`,
+			notes: `${keyword} must be an number` + (ok ? "" : ` (got ${value}).`),
 			level: ok ? "ok" : "error"
 		});
 	}
