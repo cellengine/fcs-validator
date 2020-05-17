@@ -720,6 +720,29 @@ function checkPnG(keyvals) {
 	}
 }
 
+function checkPnR(keyvals) {
+	let ok = true;
+	const $PAR = Number.parseInt(keyvals.get("$PAR"), 10);
+	for (let n = 1; n <= $PAR; n++) {
+		const value = keyvals.get(`$P${n}R`);
+		if (!/^[.0-9]+$/.test(value)) {
+			ok = false;
+			logInfo({
+				name: "§3.2.20 Keyword Specifications",
+				notes: `$P${n}R must be a number, got ${value}.`,
+				level: "error"
+			});
+		}
+	}
+	if (ok) {
+		logInfo({
+			name: "§3.2.20 Keyword Specifications",
+			notes: `$PnR values are all numbers.`,
+			level: "ok"
+		});
+	}
+}
+
 function checkPnN(version, keyvals, text) {
 	let ok = true;
 	const $PAR = Number.parseInt(keyvals.get("$PAR"), 10);
@@ -882,7 +905,7 @@ async function validate2_0(file) {
 	checkPnN("2.0", keyvals, text)
 	// no check: $PnO
 	// no check: $PnP
-	// no check: $PnR -- TODO
+	checkPnR(keyvals); // TODO this is an optional keyword
 	// no check: $PnS
 	// no check: $PnT
 	// no check: $PnV
@@ -953,7 +976,7 @@ async function validate3_0(file) {
 	checkPnN("3.0", keyvals, text)
 	// no check: $PnO
 	// no check: $PnP
-	// no check: $PnR -- TODO
+	checkPnR(keyvals);
 	// no check: $PnS
 	// no check: $PnT
 	// no check: $PnV
@@ -1032,7 +1055,7 @@ async function validate3_1(file) {
 	checkPnN("3.1", keyvals, text)
 	// no check: $PnO
 	// no check: $PnP
-	// no check: $PnR -- TODO
+	checkPnR(keyvals);
 	// no check: $PnS
 	// no check: $PnT
 	// no check: $PnV
