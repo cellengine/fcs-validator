@@ -833,7 +833,7 @@ function check$SPILLOVER(keyvals) {
 	const $PAR = Number.parseInt(keyvals.get("$PAR"));
 	// Check all channels exist. Also checks that the spillstring uses $PnN and not n.
 	const channelNames = new Set();
-	for (let n = 1; n < $PAR; n++) channelNames.add(keyvals.get(`$P${n}N`));
+	for (let n = 1; n <= $PAR; n++) channelNames.add(keyvals.get(`$P${n}N`));
 	for (let n = 1; n <= N; n++) {
 		const exists = channelNames.has(split[n]);
 		if (!exists) {
