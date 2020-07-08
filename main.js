@@ -703,15 +703,17 @@ function checkPnG(keyvals) {
 	let ok = true;
 	const $PAR = Number.parseInt(keyvals.get("$PAR"), 10);
 	for (let n = 1; n <= $PAR; n++) {
-		const $PnG = Number.parseFloat(keyvals.get(`$P${n}G`));
-		const $PnE = keyvals.get(`$P${n}E`);
-		if ($PnE !== "0,0" && $PnG !== 1) {
-			ok = false;
-			logInfo({
-				name: "§3.2.20 Keyword Specifications",
-				notes: `$P${n}G must be 1 if $P${n}E is "0,0".`,
-				level: "error"
-			});
+		if (keyvals.has(`$P${n}g`)) {
+			const $PnG = Number.parseFloat(keyvals.get(`$P${n}G`));
+			const $PnE = keyvals.get(`$P${n}E`);
+			if ($PnE !== "0,0" && $PnG !== 1) {
+				ok = false;
+				logInfo({
+					name: "§3.2.20 Keyword Specifications",
+					notes: `$P${n}G must be 1 if $P${n}E is "0,0".`,
+					level: "error"
+				});
+			}
 		}
 	}
 	if (ok) {
