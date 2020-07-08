@@ -448,7 +448,7 @@ function checkInteger(keyword, keyvals) {
 		const ok = /^[0-9]+$/.test(value);
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
-			notes: `${keyword} must be an integer.`,
+			notes: `${keyword} must be an integer` + (ok ? "" : `, got "${value}". Note that the FCS3.1 specification §3.2.17 forbids padding with any character other than '0'.`),
 			level: ok ? "ok" : "error"
 		});
 	}
@@ -460,7 +460,7 @@ function checkFloat(keyword, keyvals) {
 		const ok = /^[\.0-9]+$/.test(value);
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
-			notes: `${keyword} must be an number` + (ok ? "" : ` (got ${value}).`),
+			notes: `${keyword} must be an number` + (ok ? "" : `, got "${value}".`),
 			level: ok ? "ok" : "error"
 		});
 	}
@@ -732,7 +732,7 @@ function checkPnR(keyvals) {
 			ok = false;
 			logInfo({
 				name: "§3.2.20 Keyword Specifications",
-				notes: `$P${n}R must be a number, got ${value}.`,
+				notes: `$P${n}R must be a number, got "${value}".`,
 				level: "error"
 			});
 		}
