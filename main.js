@@ -183,7 +183,7 @@ async function checkDataCoords(file, keyvals) {
 		bitsPerEvent += bits;
 	}
 	const bitsTotal = bitsPerEvent * $TOT;
-	const bytesTotal = bitsTotal >> 3;
+	const bytesTotal = bitsTotal >>> 3;
 	const coordinates = await getCoordinates(file);
 	let [$BEGINDATA, $ENDDATA] = coordinates[1];
 	if ($BEGINDATA === 0 && $ENDDATA === 0) {
