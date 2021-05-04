@@ -1,9 +1,10 @@
-# fcs-validator
-Simple in-browser utility for validating FCS file specification compliance
+# FCS File Validator
 
-https://primitybio.github.io/fcs-validator/
+Validates files for conformance to the Flow Cytometry Standard (FCS)
+specifications.
 
-Runs entirely in your Web browser; files are not uploaded to a server.
+Runs entirely in your Web browser; files are not uploaded to a server. Use it
+here: https://primitybio.github.io/fcs-validator/
 
 This focuses on violations that are more likely to cause FCS file readers to
 fail when parsing events out of an FCS file, and that we found to be common when
@@ -26,9 +27,9 @@ It does not inspect:
   * The `STEXT`, `OTHER` or `ANALYSIS` segments, because those do not affect the
     list-mode data (events).
 
-This applies specific testing criteria for FCS2.0, FSC3.0, FCS3.1 and FCS4.0.
-Note that FCS4.0 validation is based on a draft of the FCS4.0 specification, as
-that specification has not yet been published.
+This applies specific testing criteria for FCS2.0, FSC3.0, FCS3.1, FCS3.2 and
+FCS4.0. Note that FCS4.0 validation is based on a draft of the FCS4.0
+specification, as that specification has not yet been published.
 
 Note that it is very common for vendors to produce files that use standard
 keywords (ones beginning with `$`) defined in the next version, e.g. to use a
