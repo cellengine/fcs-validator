@@ -59,6 +59,11 @@ const REQUIRED_KEYWORDS = {
 		"$ENDANALYSIS", "$ENDDATA", "$ENDSTEXT", "$MODE", "$NEXTDATA", "$PAR",
 		"$P{{n}}B", "$P{{n}}E", "$P{{n}}N", "$P{{n}}R", "$TOT"
 	],
+	"3.2": [
+		"$BEGINDATA", "$BYTEORD", "$CYT", "$DATATYPE",
+		"$ENDDATA", "$NEXTDATA", "$PAR",
+		"$P{{n}}B", "$P{{n}}E", "$P{{n}}N", "$P{{n}}R", "$TOT"
+	],
 	"4.0": [
 		"$BEGINDATA", "$BYTEORD", "$DATATYPE",
 		"$ENDDATA", "$NEXTDATA", "$PAR", "$DATE", "$ETIM", "$CYT", "$BTIM",
@@ -127,6 +132,20 @@ const OPTIONAL_KEYWORDS = {
 		"$SRC", "$SYS", "$TIMESTEP", "$TR",
 		"$VOL", "$WELLID"
 	],
+	"3.2": [
+		"$ABRT", "$BEGINANALYSIS", "$BEGINDATETIME", "$BEGINSTEXT",
+		"$CARRIERID", "$CARRIERTYPE", "$CELLS", "$COM", "$CYTSN",
+		"$ENDANALYSIS", "$ENDDATETIME", "$ENDSTEXT", "$EXP", "$FIL",
+		"$FLOWRATE", "$INST", "$LAST", "$LAST", "$LOCATIONID", "$LOST", "$MODE",
+		"$OP", "$ORIGINALITY", "$PnANALYTE", "$PnCALIBRATION", "$PnD",
+		"$PnDATATYPE", "$PnDET", "$PnF", "$PnFEATURE", "$PnG", "$PnL", "$PnO",
+		"$PnS", "$PnT", "$PnTAG", "$PnTYPE", "$PnV", "$PROJ", "$SMNO",
+		"$SPILLOVER", "$SRC", "$SYS", "$TIMESTEP", "$TR", "$UNSTAINEDCENTERS",
+		"$UNSTAINEDINFO", "$VOL",
+		// Also include the deprecated keywords:
+		"$BTIM", "$DATE", "$ETIM", "$GATING", "$PLATEID", "PLATENAME",
+		"$P{{n}}P", "$R{{n}}I", "$R{{n}}W", "$WELLID"
+	],
 	"4.0": [
 		"$BEGINANALYSIS", "$ENDANALYSIS", "$BEGINSTEXT", "$ENDSTEXT",
 		"$ABRT", "$CELLS", "$COM",
@@ -166,8 +185,9 @@ async function validate(file) {
 	if (/^FCS2.0 {4}[\d ]{48}/.test(chars)) return validate2_0(file);
 	if (/^FCS3.0 {4}[\d ]{48}/.test(chars)) return validate3_0(file);
 	if (/^FCS3.1 {4}[\d ]{48}/.test(chars)) return validate3_1(file);
+	if (/^FCS3.2 {4}[\d ]{48}/.test(chars)) return validate3_2(file);
 	if (/^FCS4.0 {4}[\d ]{48}/.test(chars)) return validate4_0(file);
-	logError("This does not appear to be a valid FCS 2.0, 3.0, 3.1 or 4.0 file.");
+	logError("This does not appear to be a valid FCS 2.0, 3.0, 3.1, 3.2 or 4.0 file.");
 	logError(chars);
 	// Note: Diva 6 on the Aria will put a "-1" in the header, which is not allowed
 	// and will fail at this point.
@@ -457,6 +477,7 @@ function checkInteger(keyword, keyvals) {
 function checkFloat(keyword, keyvals) {
 	const value = keyvals.get(keyword);
 	if (value) {
+		// TODO the spec (3.1 and 3.2 at least) allows exponential notation
 		const ok = /^[\.0-9]+$/.test(value);
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
@@ -519,7 +540,8 @@ function checkBYTEORD(version, keyvals) {
 		// Other mixed byte orderings exist but are rare.
 		allowedValues = ["1,2,3,4", "4,3,2,1", "3,4,1,2", "2,1,4,3", "1,2", "2,1"];
 	}
-	if (version === "3.1" || version === "4.0") allowedValues = ["1,2,3,4", "4,3,2,1"];
+	if (version === "3.1" || version === "3.2" || version === "4.0")
+		allowedValues = ["1,2,3,4", "4,3,2,1"];
 	const ok = allowedValues.includes(value);
 	logInfo({
 		name: "§3.2.20 Keyword Specifications",
@@ -530,14 +552,15 @@ function checkBYTEORD(version, keyvals) {
 
 function checkDATATYPE(version, keyvals) {
 	const value = keyvals.get("$DATATYPE");
-	const ok = value === "I" || value === "F" || value === "D" || value === "A";
 	if (version === "4.0") {
+		const ok = value === "I" || value === "F" || value === "D";
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
 			notes: `$DATATYPE is ${value}; must be one of "I", "F" or "D".`,
 			level: ok ? "ok" : "error"
 		});
 	} else {
+		const ok = value === "I" || value === "F" || value === "D" || value === "A";
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
 			notes: `$DATATYPE is ${value}; must be one of "I", "F", "D" or "A".`,
@@ -546,7 +569,7 @@ function checkDATATYPE(version, keyvals) {
 		if (value === "A") {
 			logInfo({
 				name: "§3.2.20 Keyword Specifications",
-				notes: `$DATATYPE "A" is deprecated in FCS 3.1 and not widely supported. Validation of this file will not be thorough.`,
+				notes: `$DATATYPE "A" is deprecated in FCS 3.1 and 3.2 and not widely supported. Validation of this file will not be thorough.`,
 				level: "warn"
 			});
 		}
@@ -640,7 +663,8 @@ function checkFloats(version, keyvals) {
 
 function checkMODE(version, keyvals) {
 	const value = keyvals.get("$MODE");
-	if (version === "4.0" && !value) return; // not required in 4.0
+	if ((version === "4.0" || version === "3.2") && !value)
+		return; // not required in 3.2 or 4.0
 	if (value === "L") {
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
@@ -648,10 +672,10 @@ function checkMODE(version, keyvals) {
 			level: "ok"
 		});
 	}
-	if (version === "4.0" && value !== "L") {
+	if ((version === "4.0" || version === "3.2") && value !== "L") {
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
-			notes: `Only $MODE "L" is supported in FCS 4.0.`,
+			notes: `Only $MODE "L" is supported in FCS 3.2 and 4.0.`,
 			level: "error"
 		});
 	} else if (value === "U" || value === "C") {
@@ -754,7 +778,7 @@ function checkPnN(version, keyvals, text) {
 	const edelim = escapeRegexpComponent(text[0]);
 	for (let n = 1; n <= $PAR; n++) {
 		const $PnN = keyvals.get(`$P${n}N`);
-		if ((version === "3.1" || version === "4.0") && $PnN.includes(",")) {
+		if ((version === "3.1" || version === "3.2" || version === "4.0") && $PnN.includes(",")) {
 			ok = false;
 			logInfo({
 				name: "§3.2.20 Keyword Specifications",
@@ -1021,7 +1045,6 @@ async function validate3_1(file) {
 	checkInteger("$BEGINDATA", keyvals);
 	checkInteger("$BEGINSTEXT", keyvals);
 	checkBETIM("3.1", "$BTIM", keyvals);
-	checkInteger("$BEGINSTEXT", keyvals);
 	checkBYTEORD("3.1", keyvals);
 	// no check: $COM
 	checkInteger("$CSMODE", keyvals);
@@ -1075,6 +1098,95 @@ async function validate3_1(file) {
 	// no check: $TR -- TODO
 	// checkNumeric("$VOL", keyvals);
 	// no check: $WELLID
+}
+
+async function validate3_2(file) {
+	logInfo({name: "Version", notes: "3.2", level: "info"});
+
+	const coordinates = await getCoordinates(file);
+
+	const text = await read(file, coordinates[0]);
+	const delimiter = text[0];
+	checkDelimiter(delimiter);
+	checkRequiredKeywords("3.2", text);
+	checkNoCustomKeywordsStartWith$("3.2", text);
+	
+	const delim = text[0];
+	const keyvals = textToMap(delim, text);
+
+	checkDuplicateKeywords(keyvals, text);
+	checkUnescapedDelimiters("3.2", keyvals, text);
+
+	await checkDataCoords(file, keyvals);
+
+	checkInteger("$ABRT", keyvals);
+	checkInteger("$BEGINANALYSIS", keyvals);
+	checkInteger("$BEGINDATA", keyvals);
+	// TODO $BEGINDATETIME yyyy-mm-ddThh:mm:ss[TZD], ISO 8601
+	checkInteger("$BEGINSTEXT", keyvals);
+	checkBETIM("3.2", "$BTIM", keyvals); // TODO mark deprecated
+	checkBYTEORD("3.2", keyvals);
+	// no check: $CARRIERID, string
+	// no check: $CARRIERTYPE, string
+	// no check: $CELLS, string
+	// no check: $COM, string
+	// no check: $CYT, string
+	// no check: $CYTSN, string
+	checkDATATYPE("3.2", keyvals);
+	checkDATE(keyvals); // TODO mark deprecated
+	checkInteger("$ENDANALYSIS", keyvals);
+	checkInteger("$ENDDATA", keyvals);
+	// TODO $ENDDATETIME
+	checkInteger("$ENDSTEXT", keyvals);
+	checkBETIM("3.2", "$ETIM", keyvals); // TODO mark deprecated
+	// no check: $EXP, string
+	// no check: $FIL, string
+	// no check: $FLOWRATE, string
+	// no check: $GATE, $GATING, $GnE,F,N,P,R,S,T,V
+	// no check: $INST, string
+	// no check: $LAST_MODIFIED -- TODO dd-mmm-yyyy hh:mm:ss[.cc]
+	// no check: $LAST_MODIFIER, string
+	// no check: $LOCATIONID, string
+	checkInteger("$LOST", keyvals);
+	checkMODE("3.2", keyvals);
+	checkInteger("$NEXTDATA", keyvals);
+	// no check: $OP, string
+	// no check: $ORIGINALITY -- TODO enum Original, Appended, NoNDataModified, DataModified
+	checkInteger("$PAR", keyvals); // we've already assumed this is...
+	// no check: $PLATEID, string, deprecated
+	// no check: $PLATENAME, string, deprecated
+	// no check: $PnANALYTE, string
+	// checked in checkDATATYPE: $PnB
+	// no check: $PnCALIBRATION -- TODO f[,f],string where f is floating point (different from 3.1)
+	checkPnD(keyvals);
+	// TODO the $PnDATATYPE keyword
+	// no check: $PnDET, string
+	// checked in checkDATATYPE: $PnE
+	// no check: $PnF, string
+	// no check, $PnFEATURE, string
+	checkPnG(keyvals);
+	// no check: $PnL
+	checkPnN("3.2", keyvals, text)
+	// no check: $PnO
+	// no check: $PnP, deprecated
+	checkPnR(keyvals);
+	// no check: $PnS
+	// no check: $PnT
+	// no check: $PnTAG
+	// no check: $PnTYPE
+	// no check: $PnV
+	// no check: $PROJ
+	// no check: $RnI, RnW, deprecated
+	// no check: $SMNO
+	check$SPILLOVER(keyvals);
+	// no check: $SRC
+	// no check: $SYS
+	// no check: $TIMESTEP -- TODO
+	checkInteger("$TOT", keyvals);
+	// no check: $TR -- TODO
+	// no check: $UNSTAINEDCENTERS
+	// no check: $UNSTAINEDINFO
+	// checkNumeric("$VOL", keyvals); -- TODO
 }
 
 async function validate4_0(file) {
