@@ -687,8 +687,9 @@ function checkMODE(version, keyvals) {
 	}
 }
 
-function checkPnD(keyvals) {
+function checkPnD(version, keyvals) {
 	let ok = true;
+	const note = version === "3.0" ? " Note: $PnD is not present in FCS3.0 specification, but this file uses those keywords regardless." : "";
 	const $PAR = Number.parseInt(keyvals.get("$PAR"), 10);
 	for (let n = 1; n <= $PAR; n++) {
 		const value = keyvals.get(`$P${n}D`);
@@ -698,18 +699,26 @@ function checkPnD(keyvals) {
 				ok = false;
 				logInfo({
 					name: "§3.2.20 Keyword Specifications",
-					notes: `$P${n}D must specify "Linear" or "Logarithmic".`,
+					notes: `$P${n}D must specify "Linear" or "Logarithmic".` + note,
 					level: "error"
 				});
 			}
 			f1 = Number.parseFloat(f1);
 			f2 = Number.parseFloat(f2);
-			if (type === "Linear" && f2 < f1) {
+			if (/^lin/.test(type) && f2 <= f1) {
 				ok = false;
 				logInfo({
 					name: "§3.2.20 Keyword Specifications",
-					notes: `$P${n}D lower bound (${f1}) must be less than upper bound (${f2}).`,
+					notes: `$P${n}D lower bound (${f1}) must be less than upper bound (${f2}).` + note,
 					level: "error"
+				});
+			}
+			if (/log/i.test(type) && f1 === 0) {
+				ok = false;
+				logInfo({
+					name: "§3.2.20 Keyword Specifications",
+					notes: `$P${n}D value ${type},${f1},${f2} indicates a scale with zero decades.` + note,
+					level: "warn"
 				});
 			}
 		}
@@ -998,7 +1007,7 @@ async function validate3_0(file) {
 	checkInteger("$PAR", keyvals); // we've already assumed this is...
 	// no check: $PKn, $PKNn
 	// checked in checkDATATYPE: $PnB
-	// (no $PnD in 3.0)
+	checkPnD("3.0", keyvals); // Not in FCS3.0 spec, but some vendors use it.
 	// no check: $PnF
 	checkPnG(keyvals);
 	// no check: $PnL -- different from 3.1 however
@@ -1075,7 +1084,7 @@ async function validate3_1(file) {
 	// no check: $PLATENAME
 	// checked in checkDATATYPE3_1: $PnB
 	// no check: $PnCALIBRATION -- TODO f,string where f is floating point
-	checkPnD(keyvals);
+	checkPnD("3.1", keyvals);
 	// checked in checkDATATYPE3_1: $PnE
 	// no check: $PnF
 	checkPnG(keyvals);
@@ -1158,7 +1167,7 @@ async function validate3_2(file) {
 	// no check: $PnANALYTE, string
 	// checked in checkDATATYPE: $PnB
 	// no check: $PnCALIBRATION -- TODO f[,f],string where f is floating point (different from 3.1)
-	checkPnD(keyvals);
+	checkPnD("3.2", keyvals);
 	// TODO the $PnDATATYPE keyword
 	// no check: $PnDET, string
 	// checked in checkDATATYPE: $PnE
@@ -1239,7 +1248,7 @@ async function validate4_0(file) {
 	// no check: $PLATENAME
 	// checked in checkDATATYPE3_1: $PnB
 	// no check: $PnCALIBRATION -- TODO f,string where f is floating point
-	checkPnD(keyvals);
+	checkPnD("4.0", keyvals);
 	// checked in checkDATATYPE3_1: $PnE
 	// no check: $PnF
 	checkPnG(keyvals);
