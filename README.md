@@ -4,7 +4,7 @@ Validates files for conformance to the Flow Cytometry Standard (FCS)
 specifications.
 
 Runs entirely in your Web browser; files are not uploaded to a server. Use it
-here: https://primitybio.github.io/fcs-validator/
+here: https://cellengine.github.io/fcs-validator/
 
 This focuses on violations that are more likely to cause FCS file readers to
 fail when parsing events out of an FCS file, and that we found to be common when
