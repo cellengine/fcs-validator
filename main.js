@@ -507,7 +507,7 @@ function checkBETIM(version, keyword, keyvals) {
 				notes: `${keyword} must match "hh:mm:ss[:tt]" (is ${value}).`,
 				level: ok ? "ok" : "error"
 			});
-		} else if (version === "3.1" || version === "4.0") { // hh:mm:ss[.cc]
+		} else if (version === "3.1" || version === "3.2" || version === "4.0") { // hh:mm:ss[.cc]
 			// not a bullet-proof test but good enough for most cases:
 			const ok = /^[0-2]\d:[0-6]\d:[0-6]\d(\.\d\d)?$/.test(value);
 			logInfo({
