@@ -137,9 +137,10 @@ const OPTIONAL_KEYWORDS = {
 		"$CARRIERID", "$CARRIERTYPE", "$CELLS", "$COM", "$CYTSN",
 		"$ENDANALYSIS", "$ENDDATETIME", "$ENDSTEXT", "$EXP", "$FIL",
 		"$FLOWRATE", "$INST", "$LAST", "$LAST", "$LOCATIONID", "$LOST", "$MODE",
-		"$OP", "$ORIGINALITY", "$PnANALYTE", "$PnCALIBRATION", "$PnD",
-		"$PnDATATYPE", "$PnDET", "$PnF", "$PnFEATURE", "$PnG", "$PnL", "$PnO",
-		"$PnS", "$PnT", "$PnTAG", "$PnTYPE", "$PnV", "$PROJ", "$SMNO",
+		"$OP", "$ORIGINALITY", "$P{{n}}ANALYTE", "$P{{n}}CALIBRATION",
+		"$P{{n}}D", "$P{{n}}DATATYPE", "$P{{n}}DET", "$P{{n}}F",
+		"$P{{n}}FEATURE", "$P{{n}}G", "$P{{n}}L", "$P{{n}}O", "$P{{n}}S",
+		"$P{{n}}T", "$P{{n}}TAG", "$P{{n}}TYPE", "$P{{n}}V", "$PROJ", "$SMNO",
 		"$SPILLOVER", "$SRC", "$SYS", "$TIMESTEP", "$TR", "$UNSTAINEDCENTERS",
 		"$UNSTAINEDINFO", "$VOL",
 		// Also include the deprecated keywords:
