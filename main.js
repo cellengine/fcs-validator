@@ -469,7 +469,7 @@ function checkInteger(keyword, keyvals) {
 		const ok = /^[0-9]+$/.test(value);
 		logInfo({
 			name: "§3.2.20 Keyword Specifications",
-			notes: `${keyword} must be an integer` + (ok ? "" : `, got "${value}". Note that the FCS3.1 specification §3.2.17 forbids padding with any character other than '0'.`),
+			notes: `${keyword} must be an integer` + (ok ? "" : `, got "${value}". The FCS3.1 specification §3.2.17 and FCS3.2 specification §3.2.9 forbid padding with any character other than '0'.`),
 			level: ok ? "ok" : "error"
 		});
 	}
