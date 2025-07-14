@@ -722,6 +722,22 @@ function checkPnD(version, keyvals) {
 					level: "warn"
 				});
 			}
+			if (/log/i.test(type) && f1 > 15) {
+				ok = false;
+				logInfo({
+					name: "§3.2.20 Keyword Specifications",
+					notes: `$P${n}D value ${type},${f1},${f2} indicates a log scale with ${f1} decades, which is likely a mistake.` + note,
+					level: f1 > 50 ? "error" : "warn"
+				});
+			}
+			if (/log/i.test(type) && f2 <= 0) {
+				ok = false;
+				logInfo({
+					name: "§3.2.20 Keyword Specifications",
+					notes: `$P${n}D value ${type},${f1},${f2} indicates a log scale with a minimum of ${f2}, which is mathematically impossible.` + note,
+					level: "error"
+				});
+			}
 		}
 	}
 	if (ok) {
