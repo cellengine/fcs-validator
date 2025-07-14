@@ -797,6 +797,20 @@ function checkPnN(version, keyvals, text) {
 			});
 		}
 	}
+
+	const channelNames = new Set();
+	for (let n = 1; n <= $PAR; n++) {
+		const cname = keyvals.get(`$P${n}N`);
+		if (channelNames.has(cname)) {
+			logInfo({
+				name: "Unique Channel Names",
+				notes: `"${cname}" is used for more than one $PnN (channel name).`,
+				level: "error"
+			});
+			ok = false;
+		}
+		channelNames.add(cname);
+	}
 	// These are ridiculous, no one adheres to them.
 	// if (version === "2.0") {
 	// 	logInfo({
