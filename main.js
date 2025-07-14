@@ -829,7 +829,7 @@ function check$COMP(keyvals) {
 	const N = Number.parseInt(split[0], 10);
 	const $PAR = Number.parseInt(keyvals.get("$PAR"));
 	const channelNames = new Set();
-	for (let n = 1; n < $PAR; n++) {
+	for (let n = 1; n <= $PAR; n++) {
 		const cname = keyvals.get(`$P${n}N`);
 		if (cname.startsWith("FL")) channelNames.add(cname);
 	}
