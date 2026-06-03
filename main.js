@@ -216,7 +216,7 @@ async function checkDataCoords(file, keyvals) {
 		$BEGINDATA = Number.parseInt(keyvals.get("$BEGINDATA"), 10);
 		$ENDDATA = Number.parseInt(keyvals.get("$ENDDATA"), 10);
 	}
-	const claimedSize = $ENDDATA - $BEGINDATA + 1;
+	const claimedSize = $ENDDATA - $BEGINDATA;
 	if (claimedSize !== bytesTotal) {
 		logInfo({
 			name: "§3.1.1 HEADER segment",
