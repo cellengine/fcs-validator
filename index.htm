@@ -4,21 +4,48 @@
 <head>
   <meta charset="utf-8">
   <title>FCS Validator</title>
-  <meta name="description" content="Utility for vaildating FCS file specification compliance">
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <meta name="description" content="Utility for validating FCS file specification compliance">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="material-theme">
   <script src="main.js"></script>
-  <label for="file-select">Select a file to validate</label>
-  <input type="file" id="file-select" onchange="validate(this.files[0])">
-  <div id="errors"></div>
-  <table id="report">
-    <thead>
-      <th></th><th>Check</th><th>Notes</th>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
+  <main class="app-shell">
+    <section class="validator-card" aria-labelledby="validator-title">
+      <header class="validator-header">
+        <h1 id="validator-title">FCS Validator</h1>
+        <p>
+          Validate FCS file compliance against the corresponding specification.
+          Supports FCS versions 2.0, 3.0, 3.1 and 3.2.
+        </p>
+        <p>
+          This open-source tool is developed and maintained by the CellEngine team at CellCarta.
+          See the code, discuss and open issues at <a href="https://github.com/cellengine/fcs-validator/">https://github.com/cellengine/fcs-validator/</a>.
+        </p>
+      </header>
+
+      <div class="validator-controls">
+        <label for="file-select">Select a file to validate</label>
+        <input type="file" id="file-select" onchange="validate(this.files[0])">
+        <p class="validator-note">Validation runs in your browser without uploading anything to the internet.</p>
+      </div>
+
+      <div id="errors" aria-live="polite"></div>
+
+      <div class="report-wrap">
+        <table id="report">
+          <thead>
+            <tr>
+              <th scope="col" class="icon-col"></th>
+              <th scope="col">Check</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 </body>
 </html>
